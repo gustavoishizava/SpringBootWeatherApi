@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.study.weathercheck.application.openweathermap.dtos.GeoCoordinatesResponse;
+import com.study.weathercheck.application.openweathermap.dtos.weather.WeatherResponse;
 import com.study.weathercheck.domain.Coordinates;
 
 @Service
@@ -40,5 +41,17 @@ public class OpenWeatherMapServiceImp implements OpenWeatherMapService {
             return null;
 
         return new Coordinates(response[0].lat(), response[0].lon());
+    }
+
+    @Override
+    public WeatherResponse getWeatherInfo(float lat, float lon) {
+        logger.info(String.format("Trying to get weather info to lat: %f lon: %f", lat, lon));
+
+        String path = "/data/2.5/weather";
+        String url = baseUrl + path + String.format("?lat=%f&lon=%f&units=metric&appid=%s", lat, lon, apiKey);
+
+        WeatherResponse response = restTemplate.getForObject(url, WeatherResponse.class);
+
+        return response;
     }
 }
